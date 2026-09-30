@@ -1,0 +1,42 @@
+[prep] raw features            : 55
+[prep] invariant (detected)    : ['handles.nport', 'pslist.nprocs64bit', 'svcscan.interactive_process_services']
+[prep] features after drop     : 52
+[prep] records                 : 58596
+[prep] benign / malware        : 29298 / 29298
+[prep] malware subtypes        : 15
+
+=== Stage 1: baseline classifiers (stratified 80/20 split) ===
+  [stage1] Random Forest        acc=0.9999 (paper 1.0000)  2.2s
+  [stage1] Gradient Boosting    acc=0.9999 (paper 0.9996)  20.3s
+  [stage1] Decision Tree        acc=0.9998 (paper 0.9997)  0.4s
+  [stage1] KNeighbors           acc=0.9994 (paper 0.9998)  1.3s
+  [stage1] Logistic Regression  acc=0.9964 (paper 0.9958)  0.4s
+  [stage1] GaussianNB           acc=0.9918 (paper 0.9922)  0.1s
+  [stage1] Support Vector       acc=0.9976 (paper 0.9970)  4.6s
+
+         Classifier  Accuracy  Precision   Recall  F1 Score  Fit+Predict (s)  Paper Accuracy  Δ vs paper
+      Random Forest  0.999915   0.999829 1.000000  0.999915              2.2          1.0000     -0.0001
+  Gradient Boosting  0.999915   1.000000 0.999829  0.999915             20.3          0.9996      0.0003
+      Decision Tree  0.999829   0.999829 0.999829  0.999829              0.4          0.9997      0.0001
+         KNeighbors  0.999403   0.999659 0.999147  0.999403              1.3          0.9998     -0.0004
+     Support Vector  0.997611   0.997781 0.997440  0.997611              4.6          0.9970      0.0006
+Logistic Regression  0.996416   0.995909 0.996928  0.996418              0.4          0.9958      0.0006
+         GaussianNB  0.991809   0.987648 0.996075  0.991844              0.1          0.9922     -0.0004
+
+=== Stage 1: 10-fold cross-validation ===
+  [cv] Random Forest        F1=0.9999 ± 0.0002
+  [cv] Gradient Boosting    F1=0.9996 ± 0.0003
+  [cv] Decision Tree        F1=0.9998 ± 0.0002
+  [cv] KNeighbors           F1=0.9997 ± 0.0003
+  [cv] Logistic Regression  F1=0.9964 ± 0.0008
+  [cv] GaussianNB           F1=0.9928 ± 0.0010
+
+         Classifier  Mean F1 (10-fold)      Std  Time (s)
+      Random Forest           0.999898 0.000156      23.9
+      Decision Tree           0.999812 0.000208       2.1
+         KNeighbors           0.999710 0.000276       6.6
+  Gradient Boosting           0.999641 0.000280     119.1
+Logistic Regression           0.996351 0.000829       0.8
+         GaussianNB           0.992774 0.000989       0.4
+
+[stage1] best = Random Forest (0.9999); mean across 7 = 0.9978

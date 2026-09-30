@@ -1,0 +1,28 @@
+=== Upgrade 2: classifier comparison under the zero-shot protocol ===
+    (paper tested Random Forest only in this setting)
+
+  [cmp] 180solutions  Random=0.9966  XGBoost=0.9933  Extra=0.9952  Gradient=0.9928  MLP=0.9915   best=Random Forest
+  [cmp] Ako           Random=0.9685  XGBoost=0.9705  Extra=0.9837  Gradient=0.9676  MLP=0.9693   best=Extra Trees
+  [cmp] CWS           Random=0.9841  XGBoost=0.9731  Extra=0.9837  Gradient=0.9741  MLP=0.9741   best=Random Forest
+  [cmp] Conti         Random=0.9914  XGBoost=0.9915  Extra=0.9925  Gradient=0.9807  MLP=0.9813   best=Extra Trees
+  [cmp] Emotet        Random=0.9973  XGBoost=0.9950  Extra=0.9973  Gradient=0.9972  MLP=0.9698   best=Random Forest
+  [cmp] Gator         Random=0.9972  XGBoost=0.9972  Extra=0.9973  Gradient=0.9875  MLP=0.9697   best=Extra Trees
+  [cmp] Maze          Random=0.9967  XGBoost=0.9967  Extra=0.9948  Gradient=0.9960  MLP=0.9848   best=Random Forest
+  [cmp] Pysa          Random=0.9967  XGBoost=0.9962  Extra=0.9973  Gradient=0.9959  MLP=0.9709   best=Extra Trees
+  [cmp] Reconyc       Random=0.9975  XGBoost=0.9981  Extra=0.9977  Gradient=0.9977  MLP=0.9845   best=XGBoost
+  [cmp] Refroso       Random=0.9594  XGBoost=0.9703  Extra=0.9644  Gradient=0.9583  MLP=0.9692   best=XGBoost
+  [cmp] Scar          Random=0.9780  XGBoost=0.9701  Extra=0.9836  Gradient=0.9826  MLP=0.9696   best=Extra Trees
+  [cmp] Shade         Random=0.9840  XGBoost=0.9703  Extra=0.9838  Gradient=0.9830  MLP=0.9694   best=Random Forest
+  [cmp] TIBS          Random=0.9974  XGBoost=0.9974  Extra=0.9973  Gradient=0.9970  MLP=0.9915   best=Random Forest
+  [cmp] Transponder   Random=0.9992  XGBoost=1.0000  Extra=1.0000  Gradient=0.9994  MLP=0.9971   best=XGBoost
+  [cmp] Zeus          Random=0.9591  XGBoost=0.9592  Extra=0.9650  Gradient=0.9588  MLP=0.9696   best=MLP
+
+                   Mean_accuracy  Mean_unseen_recall  Min_unseen_recall  Subtypes won (of 15)
+Classifier                                                                                   
+Extra Trees               0.9941              0.9889             0.9644                     5
+Random Forest             0.9926              0.9869             0.9591                     6
+XGBoost                   0.9917              0.9853             0.9592                     3
+Gradient Boosting         0.9916              0.9846             0.9583                     0
+MLP                       0.9847              0.9775             0.9692                     1
+
+[cmp] Random Forest ranks 2/5 on mean unseen-subtype recall.

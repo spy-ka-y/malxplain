@@ -1,0 +1,91 @@
+=== Upgrade 3: cross-subtype error analysis ===
+    (the paper reports aggregate accuracy only; no failure-case analysis)
+
+  [err] detector trained on 180solutions  mean recall on unseen = 0.9970
+  [err] detector trained on Ako           mean recall on unseen = 0.9623
+  [err] detector trained on CWS           mean recall on unseen = 0.9803
+  [err] detector trained on Conti         mean recall on unseen = 0.9910
+  [err] detector trained on Emotet        mean recall on unseen = 0.9976
+  [err] detector trained on Gator         mean recall on unseen = 0.9976
+  [err] detector trained on Maze          mean recall on unseen = 0.9971
+  [err] detector trained on Pysa          mean recall on unseen = 0.9970
+  [err] detector trained on Reconyc       mean recall on unseen = 0.9979
+  [err] detector trained on Refroso       mean recall on unseen = 0.9532
+  [err] detector trained on Scar          mean recall on unseen = 0.9749
+  [err] detector trained on Shade         mean recall on unseen = 0.9802
+  [err] detector trained on TIBS          mean recall on unseen = 0.9977
+  [err] detector trained on Transponder   mean recall on unseen = 0.9993
+  [err] detector trained on Zeus          mean recall on unseen = 0.9527
+
+Cross-subtype recall matrix (rows = detector trained on, cols = tested against):
+              180solutions    Ako    CWS  Conti  Emotet  Gator   Maze   Pysa  Reconyc  Refroso   Scar  Shade   TIBS  Transponder   Zeus
+180solutions         100.0  100.0  100.0   99.4   100.0   99.9  100.0  100.0     99.4     99.8  100.0   99.9  100.0         97.5   99.9
+Ako                   98.6  100.0   98.3   99.0    99.5   99.1   97.2   99.4     98.2     99.8   99.7   99.7   64.5         94.5   99.7
+CWS                   99.4  100.0  100.0   99.3    99.7   99.6   99.7   99.7     99.0    100.0  100.0  100.0   78.7         97.2  100.0
+Conti                 99.9  100.0   96.5  100.0    99.8   99.8   99.9   99.5     98.9    100.0   99.8  100.0   96.4         97.4   99.5
+Emotet               100.0  100.0  100.0   99.7   100.0  100.0  100.0  100.0     99.4    100.0  100.0  100.0  100.0         97.5  100.0
+Gator                100.0  100.0  100.0   99.7   100.0  100.0  100.0  100.0     99.4    100.0  100.0  100.0  100.0         97.5  100.0
+Maze                 100.0  100.0  100.0   99.4   100.0   99.9  100.0  100.0     99.4     99.8  100.0   99.9  100.0         97.5  100.0
+Pysa                 100.0  100.0  100.0   99.4   100.0   99.9  100.0  100.0     99.4     99.8  100.0   99.9  100.0         97.5  100.0
+Reconyc              100.0  100.0  100.0   99.7   100.0   99.9   99.9  100.0    100.0    100.0  100.0  100.0  100.0         97.6  100.0
+Refroso               93.6   98.6   99.0   97.2    99.0   99.3   97.1   99.0     95.7    100.0   99.7   97.6   64.6         94.1  100.0
+Scar                  96.2   99.4   99.4   97.3    99.3   99.6   99.7   99.6     96.8    100.0  100.0   98.4   82.3         96.8  100.0
+Shade                 99.4  100.0  100.0   99.6    99.7   99.5   99.6   99.7     99.0    100.0  100.0  100.0   78.7         97.1  100.0
+TIBS                 100.0  100.0  100.0   99.8   100.0  100.0  100.0  100.0     99.4    100.0  100.0  100.0  100.0         97.5  100.0
+Transponder          100.0  100.0  100.0   99.4   100.0   99.9  100.0  100.0    100.0     99.8  100.0   99.9  100.0         99.2  100.0
+Zeus                  93.4   98.6   99.0   97.2    99.0   99.3   97.1   98.9     95.6    100.0   99.7   97.6   64.4         94.1  100.0
+
+Ten worst detector/target blind spots:
+Detector trained on Unseen subtype   Recall
+               Zeus           TIBS 0.643972
+                Ako           TIBS 0.645390
+            Refroso           TIBS 0.646099
+              Shade           TIBS 0.786525
+                CWS           TIBS 0.787234
+               Scar           TIBS 0.823404
+               Zeus   180solutions 0.933500
+            Refroso   180solutions 0.935500
+               Zeus    Transponder 0.941079
+            Refroso    Transponder 0.941494
+
+Hardest subtypes to detect (mean recall across all 14 other detectors):
+TIBS            0.8783
+Transponder     0.9670
+Reconyc         0.9855
+180solutions    0.9860
+Conti           0.9904
+Maze            0.9930
+CWS             0.9943
+Shade           0.9948
+Gator           0.9969
+Pysa            0.9970
+Emotet          0.9971
+Ako             0.9976
+Scar            0.9992
+Refroso         0.9993
+Zeus            0.9994
+
+Most transferable detectors (mean recall on the 14 unseen subtypes):
+Transponder     0.9993
+Reconyc         0.9979
+TIBS            0.9977
+Gator           0.9976
+Emotet          0.9976
+Maze            0.9971
+Pysa            0.9970
+180solutions    0.9970
+Conti           0.9910
+CWS             0.9803
+Shade           0.9802
+Scar            0.9749
+Ako             0.9623
+Refroso         0.9532
+Zeus            0.9527
+
+Feature-level diagnosis of the worst blind spot: Zeus detector vs unseen TIBS
+                        Feature  Missed (mean)  Detected (mean)  Difference
+      dlllist.avg_dlls_per_proc         0.7905           0.6795      0.1110
+svcscan.shared_process_services         0.9650           0.9734     -0.0085
+              svcscan.nservices         0.9720           0.9772     -0.0053
+         svcscan.kernel_drivers         0.9904           0.9929     -0.0025
+   handles.avg_handles_per_proc         0.0053           0.0040      0.0012

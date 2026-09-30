@@ -1,0 +1,110 @@
+==============================================================================
+MalXplain - Reproduction & Verification Report
+Base paper: Madamidola, Ngobigha & Ez-zizi (2024), Intell. Syst. Appl. 25, 200472
+==============================================================================
+
+[1] DATASET INTEGRITY (vs paper Table 2)
+     Subtype  Paper count  Our count  Match
+180solutions         2000       2000   True
+         Ako         2000       2000   True
+         CWS         2000       2000   True
+       Conti         1988       1988   True
+      Emotet         1967       1967   True
+       Gator         2200       2200   True
+        Maze         1958       1958   True
+        Pysa         1717       1717   True
+     Reconyc         1570       1570   True
+     Refroso         2000       2000   True
+        Scar         2000       2000   True
+       Shade         2128       2128   True
+        TIBS         1410       1410   True
+ Transponder         2410       2410   True
+        Zeus         1950       1950   True
+    -> all subtype counts match: True
+    -> total records: 58596 (paper: 58,596)
+    -> features after removing invariants: 52 (paper: 52)
+
+[2] TRAIN/TEST DISJOINTNESS (leakage guard)
+     Subtype  n_train  n_test  Overlapping samples  Train is balanced  Clean
+180solutions     3200   55396                    0               True   True
+         Ako     3200   55396                    0               True   True
+         CWS     3200   55396                    0               True   True
+       Conti     3180   55416                    0               True   True
+      Emotet     3148   55448                    0               True   True
+       Gator     3520   55076                    0               True   True
+        Maze     3132   55464                    0               True   True
+        Pysa     2748   55848                    0               True   True
+     Reconyc     2512   56084                    0               True   True
+     Refroso     3200   55396                    0               True   True
+        Scar     3200   55396                    0               True   True
+       Shade     3404   55192                    0               True   True
+        TIBS     2256   56340                    0               True   True
+ Transponder     3856   54740                    0               True   True
+        Zeus     3120   55476                    0               True   True
+    -> all splits clean: True
+    -> all training sets balanced 50/50: True
+
+[3] STAGE 1 REPRODUCTION (vs paper Table 3)
+         Classifier  Accuracy  Paper Accuracy  Δ vs paper
+      Random Forest  0.999915          1.0000     -0.0001
+  Gradient Boosting  0.999915          0.9996      0.0003
+      Decision Tree  0.999829          0.9997      0.0001
+         KNeighbors  0.999403          0.9998     -0.0004
+     Support Vector  0.997611          0.9970      0.0006
+Logistic Regression  0.996416          0.9958      0.0006
+         GaussianNB  0.991809          0.9922     -0.0004
+    -> max absolute deviation: 0.0006
+    -> our best: Random Forest (0.9999); paper's best: Random Forest (1.0000)
+
+[4] STAGE 2 REPRODUCTION (vs paper Table 4)
+     Subtype  Accuracy  Paper Accuracy  Δ vs paper  Unseen-subtype recall
+     Reconyc  0.998270          0.9967      0.0016               0.997548
+       Gator  0.998094             NaN         NaN               0.997232
+        TIBS  0.997426             NaN         NaN               0.997418
+ Transponder  0.997369          0.9984     -0.0010               0.999219
+      Emotet  0.997367          0.9901      0.0073               0.997256
+        Pysa  0.997296          0.9974     -0.0001               0.996701
+        Maze  0.997169          0.9953      0.0019               0.996708
+180solutions  0.997112             NaN         NaN               0.996593
+       Conti  0.994081          0.9962     -0.0021               0.991395
+       Shade  0.991810          0.9905      0.0013               0.983990
+         CWS  0.991750             NaN         NaN               0.984138
+        Scar  0.988591          0.9810      0.0076               0.978020
+         Ako  0.984169          0.9844     -0.0002               0.968496
+     Refroso  0.979674          0.9810     -0.0013               0.959411
+        Zeus  0.979505          0.9800     -0.0005               0.959083
+    -> subtypes reported in the paper: 11/15
+    -> mean absolute deviation on those: 0.0023
+    -> models above 99% accuracy: 11/15 (paper reports 11/15)
+    -> Transponder model size: 346.88 KB (paper: ~340 KB)
+    -> Transponder inference: 1.23 us/file (paper: 5.7 us/file, different hardware)
+
+[5] UPGRADE OUTCOMES (what we added beyond the paper)
+
+  Upgrade 1 - hyperparameter tuning (paper used defaults, stated as a limitation)
+    improved on accuracy      : 7/15 subtypes
+    improved on unseen recall : 11/15 subtypes
+    mean Δ accuracy           : +0.074 pp
+    mean Δ unseen recall      : +0.216 pp
+      CWS           +0.594 pp accuracy, +1.330 pp unseen recall
+      Scar          +0.576 pp accuracy, +1.275 pp unseen recall
+      Conti         +0.135 pp accuracy, +0.450 pp unseen recall
+
+  Upgrade 2 - classifier comparison (paper tested Random Forest only here)
+                       Mean_accuracy  Mean_unseen_recall  Min_unseen_recall  Subtypes won (of 15)
+    Classifier                                                                                   
+    Extra Trees               0.9941              0.9889             0.9644                     5
+    Random Forest             0.9926              0.9869             0.9591                     6
+    XGBoost                   0.9917              0.9853             0.9592                     3
+    Gradient Boosting         0.9916              0.9846             0.9583                     0
+    MLP                       0.9847              0.9775             0.9692                     1
+    -> best mean unseen recall: Extra Trees
+    -> Random Forest rank: 2/5
+
+  Upgrade 3 - error analysis (paper reports aggregate accuracy only)
+    hardest unseen subtype    : TIBS (87.8% mean recall across 14 detectors)
+    next hardest              : Transponder (96.7%)
+    most transferable detector: Transponder (99.93% mean unseen recall)
+    least transferable        : Zeus (95.27%)
+
+==============================================================================

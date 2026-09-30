@@ -1,0 +1,40 @@
+=== Upgrade 1: hyperparameter tuning (30 candidates x 3-fold CV per subtype) ===
+    Baseline = scikit-learn defaults (what the paper used).
+
+  [tune] 180solutions  default=0.9971 -> tuned=0.9964  (-0.067 pp)  unseen-recall 0.011 pp
+  [tune] Ako           default=0.9842 -> tuned=0.9852  (+0.099 pp)  unseen-recall +0.212 pp
+  [tune] CWS           default=0.9918 -> tuned=0.9977  (+0.594 pp)  unseen-recall +1.330 pp
+  [tune] Conti         default=0.9941 -> tuned=0.9954  (+0.135 pp)  unseen-recall +0.450 pp
+  [tune] Emotet        default=0.9974 -> tuned=0.9971  (-0.029 pp)  unseen-recall -0.106 pp
+  [tune] Gator         default=0.9981 -> tuned=0.9981  (-0.004 pp)  unseen-recall 0.011 pp
+  [tune] Maze          default=0.9972 -> tuned=0.9978  (+0.061 pp)  unseen-recall -0.004 pp
+  [tune] Pysa          default=0.9973 -> tuned=0.9977  (+0.038 pp)  unseen-recall +0.076 pp
+  [tune] Reconyc       default=0.9983 -> tuned=0.9978  (-0.043 pp)  unseen-recall 0.032 pp
+  [tune] Refroso       default=0.9797 -> tuned=0.9800  (+0.036 pp)  unseen-recall +0.073 pp
+  [tune] Scar          default=0.9886 -> tuned=0.9943  (+0.576 pp)  unseen-recall +1.275 pp
+  [tune] Shade         default=0.9918 -> tuned=0.9913  (-0.049 pp)  unseen-recall -0.099 pp
+  [tune] TIBS          default=0.9974 -> tuned=0.9962  (-0.124 pp)  unseen-recall 0.007 pp
+  [tune] Transponder   default=0.9974 -> tuned=0.9963  (-0.102 pp)  unseen-recall 0.004 pp
+  [tune] Zeus          default=0.9795 -> tuned=0.9794  (-0.014 pp)  unseen-recall -0.029 pp
+
+     Subtype  Default accuracy  Tuned accuracy  Δ accuracy  Default unseen recall  Tuned unseen recall  Δ unseen recall
+         CWS          0.991750        0.997689    0.005939               0.984138             0.997436         0.013298
+        Scar          0.988591        0.994350    0.005759               0.978020             0.990769         0.012748
+       Conti          0.994081        0.995435    0.001353               0.991395             0.995899         0.004504
+         Ako          0.984169        0.985161    0.000993               0.968496             0.970621         0.002125
+        Maze          0.997169        0.997782    0.000613               0.996708             0.996672        -0.000037
+        Pysa          0.997296        0.997672    0.000376               0.996701             0.997462         0.000761
+     Refroso          0.979674        0.980035    0.000361               0.959411             0.960144         0.000733
+       Gator          0.998094        0.998057   -0.000036               0.997232             0.997343         0.000111
+        Zeus          0.979505        0.979360   -0.000144               0.959083             0.958790        -0.000293
+      Emotet          0.997367        0.997078   -0.000289               0.997256             0.996195        -0.001061
+     Reconyc          0.998270        0.997843   -0.000428               0.997548             0.997872         0.000325
+       Shade          0.991810        0.991321   -0.000489               0.983990             0.982996        -0.000994
+180solutions          0.997112        0.996444   -0.000668               0.996593             0.996703         0.000110
+ Transponder          0.997369        0.996346   -0.001023               0.999219             0.999256         0.000037
+        TIBS          0.997426        0.996184   -0.001242               0.997418             0.997490         0.000072
+
+[tune] improved: 7/15 subtypes
+[tune] mean Δ accuracy      : +0.074 pp
+[tune] mean Δ unseen recall : +0.216 pp
+[tune] largest gain         : CWS (+0.594 pp)

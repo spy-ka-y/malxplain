@@ -1,0 +1,143 @@
+{
+  "unseen_malware_detected": {
+    "sample_id": "29298",
+    "detector_trained_on": "Transponder",
+    "prediction": "Malware",
+    "confidence": 1.0,
+    "malware_probability": 1.0,
+    "ground_truth": "Malware",
+    "actual_subtype": "Ako",
+    "seen_in_training": false,
+    "evidence": [
+      {
+        "feature": "svcscan.nservices",
+        "description": "total number of Windows services running",
+        "scaled_value": 0.9801,
+        "shap_value": 0.191,
+        "pushes_towards": "malware"
+      },
+      {
+        "feature": "handles.avg_handles_per_proc",
+        "description": "average OS handles held per process",
+        "scaled_value": 0.0044,
+        "shap_value": 0.1535,
+        "pushes_towards": "malware"
+      },
+      {
+        "feature": "svcscan.shared_process_services",
+        "description": "services hosted inside shared processes",
+        "scaled_value": 0.9783,
+        "shap_value": 0.0855,
+        "pushes_towards": "malware"
+      },
+      {
+        "feature": "svcscan.kernel_drivers",
+        "description": "number of kernel drivers loaded",
+        "scaled_value": 0.994,
+        "shap_value": 0.0661,
+        "pushes_towards": "malware"
+      },
+      {
+        "feature": "handles.nevent",
+        "description": "event handles open",
+        "scaled_value": 0.2937,
+        "shap_value": 0.003,
+        "pushes_towards": "malware"
+      }
+    ]
+  },
+  "benign_correct": {
+    "sample_id": "1",
+    "detector_trained_on": "Transponder",
+    "prediction": "Benign",
+    "confidence": 0.72,
+    "malware_probability": 0.28,
+    "ground_truth": "Benign",
+    "actual_subtype": "Benign",
+    "seen_in_training": false,
+    "evidence": [
+      {
+        "feature": "svcscan.nservices",
+        "description": "total number of Windows services running",
+        "scaled_value": 0.99,
+        "shap_value": -0.2293,
+        "pushes_towards": "benign"
+      },
+      {
+        "feature": "handles.avg_handles_per_proc",
+        "description": "average OS handles held per process",
+        "scaled_value": 0.0051,
+        "shap_value": 0.1722,
+        "pushes_towards": "malware"
+      },
+      {
+        "feature": "handles.nevent",
+        "description": "event handles open",
+        "scaled_value": 0.4036,
+        "shap_value": -0.0839,
+        "pushes_towards": "benign"
+      },
+      {
+        "feature": "svcscan.shared_process_services",
+        "description": "services hosted inside shared processes",
+        "scaled_value": 1.0,
+        "shap_value": -0.0458,
+        "pushes_towards": "benign"
+      },
+      {
+        "feature": "svcscan.kernel_drivers",
+        "description": "number of kernel drivers loaded",
+        "scaled_value": 1.0,
+        "shap_value": -0.0341,
+        "pushes_towards": "benign"
+      }
+    ]
+  },
+  "benign_false_positive": {
+    "sample_id": "0",
+    "detector_trained_on": "Transponder",
+    "prediction": "Malware",
+    "confidence": 1.0,
+    "malware_probability": 1.0,
+    "ground_truth": "Benign",
+    "actual_subtype": "Benign",
+    "seen_in_training": false,
+    "evidence": [
+      {
+        "feature": "svcscan.nservices",
+        "description": "total number of Windows services running",
+        "scaled_value": 0.9801,
+        "shap_value": 0.191,
+        "pushes_towards": "malware"
+      },
+      {
+        "feature": "handles.avg_handles_per_proc",
+        "description": "average OS handles held per process",
+        "scaled_value": 0.0042,
+        "shap_value": 0.1539,
+        "pushes_towards": "malware"
+      },
+      {
+        "feature": "svcscan.shared_process_services",
+        "description": "services hosted inside shared processes",
+        "scaled_value": 0.9783,
+        "shap_value": 0.0854,
+        "pushes_towards": "malware"
+      },
+      {
+        "feature": "svcscan.kernel_drivers",
+        "description": "number of kernel drivers loaded",
+        "scaled_value": 0.994,
+        "shap_value": 0.0661,
+        "pushes_towards": "malware"
+      },
+      {
+        "feature": "handles.nevent",
+        "description": "event handles open",
+        "scaled_value": 0.3169,
+        "shap_value": 0.0027,
+        "pushes_towards": "malware"
+      }
+    ]
+  }
+}
