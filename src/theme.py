@@ -7,6 +7,10 @@ Navy is used for interface structure only, never as a chart series colour: it si
 outside the validated lightness band and below the chroma floor, so as a data mark it
 would read as grey. Chart series use the blue and copper pair, which passes all six
 accessibility checks including colour vision deficiency separation.
+
+The Streamlit header is deliberately not hidden. Hiding it removes the control that
+reopens a collapsed sidebar, which strands anyone who closes the navigation. The
+toolbar and menu inside the header are hidden individually instead.
 """
 
 SURFACE = "#FBFAF8"   # page background, warm off-white
@@ -32,10 +36,42 @@ html, body, [class*="css"] {{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   color:var(--ink);
 }}
-.block-container {{ padding-top:2.2rem; padding-bottom:4rem; max-width:1280px; }}
+/* top padding clears the floating control that reopens a collapsed sidebar */
+.block-container {{ padding-top:3.4rem; padding-bottom:4rem; max-width:1280px; }}
 
-/* hide the default streamlit chrome so it reads as a site, not a notebook */
-#MainMenu, footer, header {{ visibility:hidden; }}
+/* ---------- streamlit chrome ---------- */
+/* Hide the deploy button, the hamburger menu and the host toolbar actions so the page
+   reads as a site rather than a notebook. The header element itself is deliberately
+   kept. Streamlit renders the control that reopens a collapsed sidebar inside the
+   header, so hiding the header (or the whole toolbar, which wraps it) leaves anyone
+   who closes the navigation with no way to bring it back. */
+[data-testid="stAppDeployButton"],
+[data-testid="stMainMenu"],
+[data-testid="stMainMenuButton"],
+[data-testid="stToolbarActions"],
+[data-testid="stDecoration"],
+#MainMenu, footer {{
+  display:none !important;
+}}
+header[data-testid="stHeader"] {{
+  background:transparent !important; box-shadow:none !important; pointer-events:none;
+}}
+header[data-testid="stHeader"] * {{ pointer-events:auto; }}
+
+/* the control that reopens a collapsed sidebar, always visible and on brand */
+[data-testid="stExpandSidebarButton"] {{
+  display:flex !important; visibility:visible !important; opacity:1 !important;
+  pointer-events:auto !important;
+  background:var(--navy) !important; border-radius:6px;
+  padding:.18rem .3rem; box-shadow:0 1px 3px rgba(20,58,92,.28);
+}}
+[data-testid="stExpandSidebarButton"]:hover {{ background:#0F2C46 !important; }}
+[data-testid="stExpandSidebarButton"], [data-testid="stExpandSidebarButton"] * {{
+  color:#FFFFFF !important; fill:#FFFFFF !important;
+}}
+
+/* the collapse arrow inside the sidebar, legible against navy */
+[data-testid="stSidebarCollapseButton"] * {{ color:#E8EDF2 !important; }}
 
 /* ---------- sidebar ---------- */
 section[data-testid="stSidebar"] {{
