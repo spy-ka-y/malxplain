@@ -32,7 +32,7 @@ plain-language finding instead of a raw SHAP plot.
 | Features after removing invariants | 52 | 52 | invariant features detected independently |
 | Stage 1 best classifier | Random Forest | Random Forest | max deviation 0.0006 |
 | Stage 2 models above 99% | 11 / 15 | 11 / 15 | exact match |
-| Stage 2 mean absolute deviation |, | 0.0023 | faithful |
+| Stage 2 mean absolute deviation | n/a | 0.0023 | faithful |
 | Transponder model size | ~340 KB | 346.88 KB | consistent |
 | Lowest-performing subtype | Zeus (98%) | Zeus (97.95%) | same subtype |
 
@@ -40,20 +40,20 @@ plain-language finding instead of a raw SHAP plot.
 
 Each addresses a limitation the authors state explicitly in their own paper.
 
-**1. Hyperparameter tuning**, the paper used scikit-learn defaults and lists this
+**1. Hyperparameter tuning.** The paper used scikit-learn defaults and lists this
 as its first limitation. Randomised search (30 candidates, 3-fold CV, inside the
 training split only) improves unseen-subtype recall on 11/15 detectors, mean
 +0.216 pp. Gains concentrate where the baseline was weakest: CWS +1.33 pp,
 Scar +1.27 pp unseen recall.
 
-**2. Classifier comparison in the zero-shot setting**, the paper tests seven
+**2. Classifier comparison in the zero-shot setting.** The paper tests seven
 classifiers on known malware but only Random Forest on unseen subtypes, so it cannot
 say whether RF's generalisation is special. Running the identical protocol across five
 families shows **Extra Trees** edges out Random Forest on mean unseen recall
 (0.9889 vs 0.9869), and **MLP has the best worst case** (0.9692 vs RF's 0.9591).
 Random Forest ranks 2nd of 5, a good default, not an optimal one.
 
-**3. Cross-subtype error analysis**, the paper reports aggregate accuracy and lists
+**3. Cross-subtype error analysis.** The paper reports aggregate accuracy and lists
 "no error analysis" as a limitation. A full 15×15 detector-vs-target recall matrix
 exposes a systematic blind spot invisible in aggregate figures: **TIBS** is detected at
 only 87.8% mean recall when unseen, dropping to ~64% for the Zeus, Ako and Refroso
@@ -61,7 +61,7 @@ detectors. Feature-level diagnosis shows missed TIBS instances carry a markedly 
 `dlllist.avg_dlls_per_proc` (0.79 vs 0.68), i.e. they load more DLLs per process and so
 look more like benign software.
 
-**4. Explainability → plain-language findings**, the paper's SHAP output is a plot a
+**4. Explainability → plain-language findings.** The paper's SHAP output is a plot a
 human must interpret. MalXplain serialises SHAP evidence into a structured payload and
 has a **locally-hosted LLM (Ollama)** turn it into a readable finding, so the analyst
 gets a conclusion rather than a chart.
@@ -83,6 +83,7 @@ malxplain/
 │   └── verify.py           reproduction report and leakage guards
 ├── scripts/setup.py    one-command bootstrap (downloads dataset, checks env)
 ├── app.py              Streamlit prototype
+├── MalXplain_Implementation.ipynb  Phase 2 Colab implementation notebook
 ├── results/            CSV outputs + verification_report.txt
 ├── figures/            SHAP plots
 └── models/             trained detectors + feature glossary
