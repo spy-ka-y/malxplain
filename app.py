@@ -267,14 +267,21 @@ elif page == "Hyperparameter tuning":
     if t is None:
         missing("The tuning result file")
     else:
+        # Deliberately not highlighted. These are one seed, and the repeated run
+        # section below shows the gain does not survive. Presenting them as the
+        # headline would contradict the page's own conclusion.
+        H(note("The four figures below come from a <strong>single split</strong>. They are "
+               "the numbers this project reported before review. Read the repeated run "
+               "section underneath before quoting any of them.", "flag"))
         H(tiles([
-            ("Improved on unseen recall", f"{int((t['Δ unseen recall'] > 0).sum())} of 15",
-             "the metric that matters for zero shot", True),
-            ("Mean change", f"{t['Δ unseen recall'].mean()*100:+.3f} pp", "unseen subtype recall", False),
-            ("Largest single gain", f"{t['Δ unseen recall'].max()*100:+.2f} pp",
-             "concentrated in the weakest detectors", False),
+            ("Improved, single split", f"{int((t['Δ unseen recall'] > 0).sum())} of 15",
+             "one seed, not repeated", False),
+            ("Mean change, single split", f"{t['Δ unseen recall'].mean()*100:+.3f} pp",
+             "falls to +0.030 pp over ten seeds", False),
+            ("Largest gain, single split", f"{t['Δ unseen recall'].max()*100:+.2f} pp",
+             "CWS, which measures +0.37 pp over ten seeds", False),
             ("Improved on accuracy", f"{int((t['Δ accuracy'] > 0).sum())} of 15",
-             "a more modest picture", False),
+             "a more modest picture even here", False),
         ]))
         st.pyplot(charts.tuning_chart(t))
         st.dataframe(
