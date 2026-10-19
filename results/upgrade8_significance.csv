@@ -1,0 +1,3 @@
+Comparison,n pairs,Mean difference (pp),95% CI low (pp),95% CI high (pp),t test p,Wilcoxon p,Significant at 0.05,CI excludes zero
+RF tuned vs RF default,150,0.03016826746670372,-0.02987127438516508,0.09020780931857252,0.32237135771311676,0.02521358070920212,True,False
+Extra Trees default vs RF default,150,0.17356509387013488,0.0883181596062209,0.2588120281340489,9.09930968715065e-05,5.01065184078262e-05,True,True

@@ -20,10 +20,17 @@ Design constraints, deliberately chosen:
 from __future__ import annotations
 
 import json
+import os
 import urllib.error
 import urllib.request
 
-DEFAULT_HOST = "http://localhost:11434"
+# Ollama binds 127.0.0.1 only. On Windows "localhost" commonly resolves to the IPv6
+# address ::1 first, where nothing is listening, so the availability probe fails and
+# the reporting layer silently falls back to the template even though the service is
+# running. Using the IPv4 literal avoids that entirely. OLLAMA_HOST overrides it.
+DEFAULT_HOST = os.environ.get("OLLAMA_HOST", "http://127.0.0.1:11434")
+if DEFAULT_HOST and not DEFAULT_HOST.startswith("http"):
+    DEFAULT_HOST = f"http://{DEFAULT_HOST}"
 DEFAULT_MODEL = "llama3.2:3b"
 TIMEOUT_S = 120
 

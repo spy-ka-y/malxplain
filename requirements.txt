@@ -6,3 +6,4 @@ shap>=0.44
 matplotlib>=3.7
 streamlit>=1.40
 ollama>=0.3
+scipy>=1.11

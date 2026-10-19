@@ -1,0 +1,76 @@
+Subtype,Classifier,Batch us/sample,Batch IQR,Single us/sample,Single IQR,Model size (KB)
+180solutions,Random Forest,1.461,0.023,4697.38,211.32,115.33
+180solutions,XGBoost,0.49,0.013,238.6,5.79,87.59
+180solutions,Extra Trees,2.258,0.046,4687.23,122.79,274.89
+180solutions,Gradient Boosting,0.667,0.04,175.31,7.5,109.68
+180solutions,MLP,0.32,0.01,100.28,3.14,33.34
+Ako,Random Forest,1.346,0.045,4540.94,75.22,104.4
+Ako,XGBoost,0.461,0.007,233.16,4.68,85.27
+Ako,Extra Trees,3.562,0.505,4561.21,20.9,390.37
+Ako,Gradient Boosting,0.594,0.006,175.47,4.15,92.95
+Ako,MLP,0.337,0.023,107.8,7.0,34.84
+CWS,Random Forest,1.512,0.044,4729.77,176.82,118.62
+CWS,XGBoost,0.477,0.029,242.11,8.38,83.67
+CWS,Extra Trees,3.526,0.108,4971.05,407.33,406.31
+CWS,Gradient Boosting,0.617,0.114,181.34,10.29,109.26
+CWS,MLP,0.325,0.057,104.33,6.13,32.76
+Conti,Random Forest,1.526,0.123,5116.34,262.92,134.56
+Conti,XGBoost,0.567,0.024,278.76,14.54,88.59
+Conti,Extra Trees,2.786,0.15,5264.05,431.64,375.37
+Conti,Gradient Boosting,0.64,0.024,176.96,4.01,109.54
+Conti,MLP,0.326,0.013,102.08,1.02,33.54
+Emotet,Random Forest,1.495,0.079,4941.33,258.52,133.47
+Emotet,XGBoost,0.579,0.243,259.52,16.46,88.85
+Emotet,Extra Trees,3.51,0.143,5203.4,315.65,452.72
+Emotet,Gradient Boosting,0.762,0.037,218.08,8.78,117.84
+Emotet,MLP,0.426,0.104,112.19,4.04,33.41
+Gator,Random Forest,1.747,0.126,5012.25,720.44,141.59
+Gator,XGBoost,0.538,0.024,255.17,3.29,88.45
+Gator,Extra Trees,3.293,0.259,4553.48,50.85,409.12
+Gator,Gradient Boosting,0.672,0.026,175.23,3.85,97.59
+Gator,MLP,0.314,0.013,100.73,1.37,32.72
+Maze,Random Forest,1.202,0.023,4504.88,28.32,109.08
+Maze,XGBoost,0.476,0.016,237.77,9.86,86.2
+Maze,Extra Trees,2.023,0.008,4535.87,17.16,239.25
+Maze,Gradient Boosting,0.661,0.007,175.05,3.24,108.13
+Maze,MLP,0.328,0.019,99.88,0.99,34.15
+Pysa,Random Forest,1.129,0.08,4819.39,491.55,108.46
+Pysa,XGBoost,0.523,0.034,243.4,18.31,86.0
+Pysa,Extra Trees,2.063,0.062,4588.49,33.16,189.09
+Pysa,Gradient Boosting,0.44,0.01,175.0,3.41,80.85
+Pysa,MLP,0.307,0.012,101.65,1.13,33.26
+Reconyc,Random Forest,1.202,0.041,4539.52,37.71,166.44
+Reconyc,XGBoost,0.49,0.009,249.49,19.64,89.0
+Reconyc,Extra Trees,1.804,0.05,4640.29,211.56,321.29
+Reconyc,Gradient Boosting,0.657,0.013,176.33,1.92,124.87
+Reconyc,MLP,0.314,0.011,100.45,0.6,35.28
+Refroso,Random Forest,1.302,0.028,4495.31,15.56,96.27
+Refroso,XGBoost,0.468,0.016,236.58,4.03,85.6
+Refroso,Extra Trees,2.531,0.067,4535.01,22.72,328.49
+Refroso,Gradient Boosting,0.559,0.022,176.4,1.86,80.85
+Refroso,MLP,0.325,0.012,100.28,0.72,34.04
+Scar,Random Forest,1.342,0.011,4498.69,123.47,109.08
+Scar,XGBoost,0.476,0.008,255.09,28.0,86.46
+Scar,Extra Trees,2.869,0.138,4536.13,15.18,353.33
+Scar,Gradient Boosting,0.56,0.019,176.55,18.15,112.35
+Scar,MLP,0.316,0.015,101.83,6.24,33.39
+Shade,Random Forest,1.348,0.04,4526.46,61.83,136.12
+Shade,XGBoost,0.488,0.005,234.16,3.57,87.79
+Shade,Extra Trees,3.542,0.232,4543.02,46.1,413.34
+Shade,Gradient Boosting,0.657,0.004,175.44,3.25,116.29
+Shade,MLP,0.331,0.021,101.66,0.8,35.41
+TIBS,Random Forest,1.174,0.027,4497.03,26.54,104.87
+TIBS,XGBoost,0.518,0.023,245.77,17.41,87.52
+TIBS,Extra Trees,1.555,0.069,4539.36,29.54,187.84
+TIBS,Gradient Boosting,0.653,0.004,175.02,12.23,93.93
+TIBS,MLP,0.32,0.009,101.67,1.26,35.84
+Transponder,Random Forest,1.192,0.013,4514.23,119.44,344.12
+Transponder,XGBoost,0.81,0.01,236.81,4.13,116.21
+Transponder,Extra Trees,1.967,0.045,4542.87,15.32,995.13
+Transponder,Gradient Boosting,0.619,0.007,174.33,4.04,123.6
+Transponder,MLP,0.32,0.023,99.99,0.59,31.41
+Zeus,Random Forest,1.05,0.032,4479.62,12.66,70.18
+Zeus,XGBoost,0.43,0.012,240.27,6.09,78.69
+Zeus,Extra Trees,1.583,0.009,4586.2,89.99,139.4
+Zeus,Gradient Boosting,0.269,0.007,173.97,5.52,54.13
+Zeus,MLP,0.322,0.014,101.36,1.03,33.67

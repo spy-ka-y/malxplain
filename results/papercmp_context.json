@@ -1,0 +1,22 @@
+{
+  "n_subtypes_compared": 11,
+  "subtypes_compared": [
+    "Reconyc",
+    "Transponder",
+    "Emotet",
+    "Pysa",
+    "Maze",
+    "Conti",
+    "Shade",
+    "Scar",
+    "Ako",
+    "Refroso",
+    "Zeus"
+  ],
+  "paper_random_forest_mean_accuracy": 0.9900909090909091,
+  "our_random_forest_mean_accuracy": 0.9913910802254872,
+  "delta": 0.001300171134578032,
+  "paper_publishes_unseen_recall": false,
+  "paper_publishes_other_families": false,
+  "note": "The paper reports Stage 2 accuracy for Random Forest only, and only for 11 of the 15 subtypes. It publishes no unseen subtype recall and no result for any other classifier family under this protocol, which is the gap this comparison fills."
+}

@@ -66,6 +66,9 @@ PAGES = [
     "Classifier comparison",
     "Blind spot analysis",
     "Explainability",
+    "Feature selection",
+    "Operating point",
+    "Inference cost",
     "Live detection",
 ]
 
@@ -90,9 +93,9 @@ if page == "Overview":
         "MalXplain",
         "A malware detector is trained on one single subtype, roughly 6.6 percent of the "
         "dataset, and then tested against all fourteen subtypes it has never seen. This "
-        "project reproduces that result from the base paper, closes three of the four "
-        "limitations the original authors state themselves, and produces a readable finding "
-        "instead of a raw plot.",
+        "project reproduces that result from the base paper, closes six of the eight "
+        "limitations the original authors state themselves, adds three drawn from the wider "
+        "literature, and produces a readable finding instead of a raw plot.",
         "Pravara Jain (K020) · Yash Mehta (K035) · Somya Soni (K063) &nbsp;|&nbsp; "
         "B.Tech Cybersecurity, NMIMS MPSTME, Mumbai",
         eyebrow="Software Engineering Project",
@@ -143,10 +146,42 @@ if page == "Overview":
           'a human must interpret. A locally hosted language model turns the same evidence '
           'into prose, without ever touching the detection decision.</span></div>')
 
-    H(note("<strong>Not closed:</strong> cross dataset validation. It is the base paper's own "
-           "first future work item, it needs a second memory forensics dataset with compatible "
-           "features, and it remains open. Stating that plainly is more useful than a weak "
-           "attempt at it.", "flag"))
+    H(section("Added after the first review", kicker="New"))
+    n1, n2 = st.columns(2)
+    with n1:
+        H('<div class="card"><strong>5. Inference cost measured</strong><br>'
+          '<span style="color:#6B7280;font-size:.88rem;line-height:1.6">The authors guessed '
+          'that other models could be substantially faster at similar accuracy. They were '
+          'right: Gradient Boosting is roughly 26 times faster per sample for 0.23 percentage '
+          'points of recall.</span></div>')
+        H('<div class="card"><strong>7. Repeated runs and intervals</strong><br>'
+          '<span style="color:#6B7280;font-size:.88rem;line-height:1.6">Ten seeds instead of '
+          'one. This overturned our own tuning claim and confirmed the Extra Trees result, '
+          'which single run figures could not support either way.</span></div>')
+    with n2:
+        H('<div class="card"><strong>6. Realistic operating point</strong><br>'
+          '<span style="color:#6B7280;font-size:.88rem;line-height:1.6">Precision and false '
+          'positive rate at a realistic malware rate, not just recall on a balanced split. A '
+          'weakness shared with most of the reviewed literature.</span></div>')
+        H('<div class="card"><strong>8. Explanation faithfulness</strong><br>'
+          '<span style="color:#6B7280;font-size:.88rem;line-height:1.6">The attribution and '
+          'the written finding are now measured against controls rather than asserted. No '
+          'reviewed paper does this for a language model reporting layer.</span></div>')
+    H('<div class="card"><strong>9. Feature selection alternatives</strong><br>'
+      '<span style="color:#6B7280;font-size:.88rem;line-height:1.6">Four methods compared. '
+      'The base paper\'s choice is not beaten, which validates it rather than replacing '
+      'it.</span></div>')
+
+    H(note("<strong>Still open:</strong> cross dataset validation, other malware datasets, "
+           "and integration with static analysis. Cross dataset work needs a second memory "
+           "forensics dataset with compatible features; static analysis needs features "
+           "CIC-MalMem-2022 does not ship, and the original binaries are not distributed with "
+           "it. Stating that plainly is more useful than a weak attempt at either.", "flag"))
+
+    H(note("Two findings here contradict what this project claimed before review. "
+           "Hyperparameter tuning does not meaningfully help on this problem, shown "
+           "independently by the ten seed analysis and by the operating point work. Both are "
+           "reported as they came out rather than quietly dropped.", "key"))
 
     H(section(
         "Verification",
@@ -247,12 +282,44 @@ elif page == "Hyperparameter tuning":
                "Default unseen recall", "Tuned unseen recall", "Δ unseen recall"]],
             hide_index=True, width="stretch")
         H(note(
-            "<strong>Reported honestly.</strong> Accuracy improved on only seven of fifteen "
-            "subtypes and the mean gain is small. The gains concentrate exactly where the "
-            "baseline was weakest, CWS and Scar, while already strong detectors shift slightly "
-            "the other way. Because results sit near the ceiling, differences of a few "
-            "hundredths of a percentage point fall inside normal seed variance and are not "
-            "claimed as improvements.", "flag"))
+            "The figures above come from a single split. Whether any of this survives "
+            "repetition is the question the next section answers.", "flag"))
+
+    H(section("Does the tuning gain survive repetition?",
+              "Added after review. The numbers above rest on one seed. Every detector was "
+              "refitted across ten different splits, with the parameters already found, and "
+              "the difference tested as a paired comparison.",
+              kicker="New · Added after review"))
+
+    arms = load("upgrade8_arm_summary.csv")
+    tests = load("upgrade8_significance.csv")
+    per_sub = load("upgrade8_per_subtype_tuning.csv")
+    if arms is None or tests is None:
+        missing("The repeated seed analysis")
+    else:
+        row = tests[tests["Comparison"] == "RF tuned vs RF default"].iloc[0]
+        H(tiles([
+            ("Mean gain over ten seeds", f"{row['Mean difference (pp)']:+.3f} pp",
+             "against +0.216 pp from the single run", False),
+            ("95 percent interval",
+             f"[{row['95% CI low (pp)']:+.3f}, {row['95% CI high (pp)']:+.3f}] pp",
+             "includes zero" if not row["CI excludes zero"] else "excludes zero", False),
+            ("Subtypes with a real gain",
+             f"{int(per_sub['Gain is significant'].sum())} of 15" if per_sub is not None else "n/a",
+             "interval excluding zero", False),
+        ]))
+        st.pyplot(charts.significance_chart(arms))
+        st.dataframe(tests.round(5), hide_index=True, width="stretch")
+        H(note(
+            "<strong>The single run overstated this.</strong> Across ten seeds the mean gain "
+            "falls to +0.030 percentage points with a confidence interval that includes zero, "
+            "so tuning cannot be claimed as an improvement on this problem. Five of fifteen "
+            "subtypes show a gain whose interval excludes zero, and one, Shade, is "
+            "significantly worse. The base paper listed the absence of tuning as its first "
+            "limitation; the honest answer is that closing it changes very little.", "key"))
+        if per_sub is not None:
+            with st.expander("Tuning gain per subtype, with intervals"):
+                st.dataframe(per_sub.round(4), hide_index=True, width="stretch")
 
 
 # =========================================================================== #
@@ -268,6 +335,42 @@ elif page == "Classifier comparison":
         "Upgrade two, a question the base paper structurally could not answer",
         eyebrow="Upgrade 02",
     ))
+
+    H(section("Our numbers against the published ones",
+              "Added after review. A true paired comparison exists only for Stage 1, where "
+              "the paper publishes all seven classifiers on known malware. For the zero shot "
+              "protocol the paper reports Random Forest alone, and no unseen subtype recall "
+              "at all, which is precisely the gap this page fills.",
+              kicker="New · Added after review"))
+
+    cmp1 = load("papercmp_stage1.csv")
+    cmpz = load("papercmp_zeroshot.csv")
+    ctx = load_json("papercmp_context.json")
+    if cmp1 is None:
+        missing("The base paper comparison")
+    else:
+        H(tiles([
+            ("Stage 1 classifiers matched", f"{int(cmp1['Matches within 0.001'].sum())} of 7",
+             "within 0.001 of the published value", True),
+            ("Largest deviation", f"{cmp1['Abs delta'].max():.4f}",
+             "across all seven classifiers", False),
+            ("Stage 2, paper's own subtypes",
+             f"{ctx['our_random_forest_mean_accuracy']:.4f}" if ctx else "n/a",
+             f"paper {ctx['paper_random_forest_mean_accuracy']:.4f}" if ctx else "", False),
+        ]))
+        st.pyplot(charts.paper_deviation_chart(cmp1))
+        st.dataframe(cmp1.round(5), hide_index=True, width="stretch")
+        if cmpz is not None and ctx is not None:
+            H(section("Zero shot, restricted to the subtypes the paper reports",
+                      "Averaged over the same eleven subtypes, so the one published figure "
+                      "is a like for like reference rather than an average over a different set."))
+            st.dataframe(cmpz.round(5), hide_index=True, width="stretch")
+            H(note(f"<strong>{ctx['note']}</strong> Our Random Forest reaches "
+                   f"{ctx['our_random_forest_mean_accuracy']:.4f} against the paper's "
+                   f"{ctx['paper_random_forest_mean_accuracy']:.4f}, a difference of "
+                   f"{ctx['delta']:+.4f}.", "key"))
+
+    H(section("Five families under the identical protocol", kicker="Upgrade 02"))
 
     summary = load("upgrade2_comparison_summary.csv", index_col=0)
     full = load("upgrade2_comparison_full.csv")
@@ -429,6 +532,235 @@ elif page == "Explainability":
                 st.dataframe(pd.DataFrame(v["evidence"]), hide_index=True, width="stretch")
         H(note("The false positive is included on purpose. A demonstration that shows only "
                "successes tells an analyst nothing about how the system fails.", "flag"))
+
+    H(section("Is the explanation actually faithful?",
+              "Added after review. Until now this page asserted that the attribution and the "
+              "written finding were useful without testing either. Two measures, each against "
+              "a control.",
+              kicker="New · Added after review"))
+
+    fa = load_json("upgrade9_faithfulness_summary.json")
+    if fa is None:
+        missing("The faithfulness results")
+    else:
+        H(tiles([
+            ("Top feature vs random", f"+{fa['faithfulness_margin']:.4f}",
+             "probability shift when ablated", True),
+            ("Top feature moved it more",
+             f"{fa['top_moved_more_rate_excluding_ties']:.0%}",
+             f"ties excluded ({fa['tie_rate']:.0%} saturated)", False),
+            ("Shift matched the SHAP sign",
+             f"{fa['direction_as_shap_predicted_rate']:.1%}",
+             f"over {fa['ablation_samples']} samples", False),
+        ]))
+        H(note(
+            "Removing the feature SHAP ranked first shifts the predicted probability by "
+            f"{fa['mean_delta_top_feature']:.4f} on average, against "
+            f"{fa['mean_delta_random_feature']:.4f} for a randomly chosen one. The attribution "
+            "is not decorative: it points at the features the model actually used.", "key"))
+
+        H(section("Does the written finding stay inside its evidence?",
+                  "Each generated finding is checked against the payload it was given."))
+        g1, g2, g3 = st.columns(3)
+        g1.metric("Names only payload features",
+                  f"{fa['feature_grounded_rate']:.0%}")
+        g2.metric("States a matching confidence",
+                  f"{fa['confidence_grounded_rate']:.0%}")
+        g3.metric("Features named per finding",
+                  f"{fa['mean_features_named_per_finding']:.2f} of 5")
+        H(note(
+            f"Measured on {fa['grounding_samples']} findings written by the local model, with "
+            f"{fa['ungrounded_mentions_total']} ungrounded mentions. The measure itself was "
+            f"calibrated first: {fa['control_samples']} template findings, which cannot name "
+            f"an outside feature, produce {fa['control_false_positives']} false alarms, and "
+            "three deliberately injected faults are all detected. A measure that never fires "
+            "would report a perfect score too, so the controls are what make this number "
+            "worth reading.", "key"))
+
+        lims = fa.get("known_limitations", [])
+        if lims:
+            with st.expander("Known limitations of this measure, and errors found by hand"):
+                for item in lims:
+                    H(f'<div style="font-size:.86rem;color:#6B7280;line-height:1.65;'
+                      f'margin-bottom:.6rem">{item}</div>')
+                H(f'<div style="font-size:.86rem;color:#6B7280;line-height:1.65">'
+                  f'{fa.get("value_claim_check_withdrawn", "")}</div>')
+
+
+# =========================================================================== #
+# Feature selection
+# =========================================================================== #
+elif page == "Feature selection":
+    H(masthead(
+        "Are these the right five features?",
+        "The base paper ranks features by Random Forest importance, keeps the top five, and "
+        "lists the absence of alternative selection methods as one of its own limitations. "
+        "This project inherited that choice without testing it. Four methods now run through "
+        "the identical fifteen detector protocol, each confined to the training split.",
+        "A limitation the original authors stated and neither paper closed until now",
+        eyebrow="Upgrade 07 · New",
+    ))
+
+    fs = load("upgrade7_featsel_summary.csv")
+    ag = load("upgrade7_featsel_agreement.csv")
+    full = load("upgrade7_featsel_full.csv")
+    if fs is None:
+        missing("The feature selection comparison")
+    else:
+        best = fs.iloc[0]
+        base = fs[fs["Method"].str.contains("base paper")].iloc[0]
+        H(tiles([
+            ("Best method", best["Method"],
+             f"{best['Mean unseen recall']*100:.2f} percent mean unseen recall", True),
+            ("Base paper's method holds",
+             "yes" if "base paper" in best["Method"] else "no",
+             "validated rather than replaced" if "base paper" in best["Method"]
+             else "beaten by an alternative", False),
+            ("Worst method", fs.iloc[-1]["Method"],
+             f"{(fs.iloc[-1]['Mean unseen recall'] - base['Mean unseen recall'])*100:+.2f} pp "
+             "against the base paper", False),
+        ]))
+        st.pyplot(charts.featsel_chart(fs))
+        st.dataframe(fs.round(5), hide_index=True, width="stretch")
+        H(note(
+            "<strong>The base paper's choice survives the test.</strong> No alternative beats "
+            "Random Forest importance, which validates their decision rather than replacing "
+            "it. The useful finding is the ANOVA F test, the method reference [12] applied to "
+            "this same dataset, which costs 0.84 percentage points of unseen recall and agrees "
+            "with the others on only 2.2 of 5 features.", "key"))
+        if ag is not None:
+            H(section("How far the methods agree",
+                      "Shared features out of five, against the base paper's selection."))
+            st.dataframe(ag.round(3), hide_index=True, width="stretch")
+        if full is not None:
+            with st.expander("Per subtype results, with the features each method chose"):
+                st.dataframe(full, hide_index=True, width="stretch")
+
+
+# =========================================================================== #
+# Operating point
+# =========================================================================== #
+elif page == "Operating point":
+    H(masthead(
+        "What happens when malware is rare?",
+        "Every figure in the base paper, and on every other page here, comes from a test set "
+        "that is half benign and half malware, reported as accuracy or recall. Malware is not "
+        "half of real traffic. The same detectors are re-scored on sets reweighted to a "
+        "realistic rate, with precision and false positive rate beside recall.",
+        "A weakness shared by the base paper and most of the reviewed literature",
+        eyebrow="Upgrade 06 · New",
+    ))
+
+    op = load("upgrade6_operating_point_summary.csv")
+    full = load("upgrade6_operating_point.csv")
+    if op is None:
+        missing("The operating point analysis")
+    else:
+        low = op[op["Prevalence"] == op["Prevalence"].min()]
+        base = low[low["Configuration"].str.contains("Base paper")].iloc[0]
+        tuned = low[low["Configuration"].str.contains("MalXplain")].iloc[0]
+        H(tiles([
+            ("Precision at 10 percent", f"{base['Mean precision']*100:.2f} percent",
+             "base paper configuration", True),
+            ("False positive rate", f"{base['Mean FPR %']:.3f} percent",
+             "what keeps precision high", False),
+            ("Tuned configuration",
+             f"{(tuned['Mean precision']-base['Mean precision'])*100:+.2f} pp precision",
+             f"{(tuned['Mean recall']-base['Mean recall'])*100:+.2f} pp recall", False),
+        ]))
+        st.pyplot(charts.operating_point_chart(op))
+        st.dataframe(op.round(4), hide_index=True, width="stretch")
+        H(note(
+            "<strong>Tuning trades precision for recall, and at a realistic rate that is a "
+            "losing trade.</strong> The tuned detectors catch slightly more malware but raise "
+            "the false positive rate from 0.179 to 0.242 percent, which costs more precision "
+            "than the recall is worth once malware is rare. This is the second independent "
+            "line of evidence, alongside the ten seed analysis, that hyperparameter tuning "
+            "does not help on this problem.", "key"))
+        if full is not None:
+            with st.expander("Per subtype, per configuration, per prevalence"):
+                st.dataframe(full.round(4), hide_index=True, width="stretch")
+
+
+# =========================================================================== #
+# Inference cost
+# =========================================================================== #
+elif page == "Inference cost":
+    H(masthead(
+        "What does the extra accuracy cost?",
+        "The base paper wrote that other models \"could offer substantial improvements in "
+        "speed while maintaining similar accuracy levels\" and never measured it. Batch "
+        "throughput and single sample latency are reported separately, threads pinned to one "
+        "core, with a warm up discarded and ten repeats reported as a median.",
+        "Closing the second half of the authors' second stated limitation",
+        eyebrow="Upgrade 05 · New",
+    ))
+
+    host = load_json("upgrade5_host_Yash_laptop.json")
+    bench = load("upgrade5_benchmark_summary_Yash_laptop.csv")
+    detail = load("upgrade5_benchmark_Yash_laptop.csv")
+    if bench is None:
+        missing("The inference cost benchmark")
+    else:
+        rf = bench[bench["Classifier"] == "Random Forest"].iloc[0]
+        gb = bench[bench["Classifier"] == "Gradient Boosting"].iloc[0]
+        H(tiles([
+            ("Gradient Boosting against Random Forest",
+             f"{rf['Single us/sample']/gb['Single us/sample']:.0f}x faster",
+             f"for {(gb['Mean_unseen_recall']-rf['Mean_unseen_recall'])*100:+.2f} pp recall", True),
+            ("Random Forest latency", f"{rf['Single us/sample']:.0f} us per sample",
+             "one dump at a time, as deployed", False),
+            ("Smallest model", bench.sort_values("Model size (KB)").iloc[0]["Classifier"],
+             f"{bench['Model size (KB)'].min():.1f} KB", False),
+        ]))
+        st.pyplot(charts.cost_accuracy_chart(bench))
+        st.dataframe(bench.round(4), hide_index=True, width="stretch")
+        H(note(
+            "<strong>The authors' guess was right, and larger than they suggested.</strong> "
+            "Gradient Boosting is roughly 26 times faster per sample than Random Forest for "
+            "0.23 percentage points of unseen recall, and XGBoost 19 times faster for 0.16. "
+            "Note how differently the batch column reads: measured in bulk, Random Forest "
+            "looks only about four times costlier than the MLP, which hides a 45 fold "
+            "penalty in the way a detector is actually used.", "key"))
+        if host:
+            H(note(
+                f"Measured on {host.get('cpu', 'unknown CPU')}, "
+                f"{host.get('physical_cores', '?')} cores and "
+                f"{host.get('logical_cores', '?')} threads, {host.get('ram_gb', '?')} GB, "
+                f"{host.get('os', host.get('platform', ''))}, Python {host.get('python', '?')}, "
+                f"scikit-learn {host.get('scikit_learn', '?')}, threads pinned to 1. "
+                "Absolute times belong to this machine; the ratio columns are the comparable "
+                "part, and model size in kilobytes is hardware independent.", "flag"))
+        cloud = load("upgrade5_benchmark_summary_Cloud_container.csv")
+        chost = load_json("upgrade5_host_Cloud_container.json")
+        if cloud is not None:
+            H(section("The same benchmark on a second machine",
+                      "Absolute times belong to the hardware they were taken on, so the claim "
+                      "has to rest on the ratios. Running the identical benchmark on a very "
+                      "different machine is what shows those ratios hold.",
+                      kicker="Two machines"))
+            merged = bench[["Classifier", "Single us/sample", "Latency vs RF", "Size vs RF"]].merge(
+                cloud[["Classifier", "Single us/sample", "Latency vs RF", "Size vs RF"]],
+                on="Classifier", suffixes=(" (laptop)", " (cloud)"))
+            st.dataframe(merged.round(3), hide_index=True, width="stretch")
+            H(note(
+                "Random Forest takes "
+                f"{bench[bench['Classifier']=='Random Forest']['Single us/sample'].iloc[0]:.0f} "
+                "microseconds per sample on the laptop and "
+                f"{cloud[cloud['Classifier']=='Random Forest']['Single us/sample'].iloc[0]:.0f} "
+                "on the cloud container, a 17 percent difference in absolute terms. The "
+                "ordering of the five families is identical on both, and every latency ratio "
+                "agrees to within 0.01. <strong>That is why the report leads with the ratio "
+                "and not the microsecond count.</strong>", "key"))
+            if chost:
+                H('<div style="font-size:.78rem;color:#6B7280">Second machine: '
+                  f'{chost.get("cpu", "")}, {chost.get("logical_cores", "?")} logical cores, '
+                  f'{chost.get("ram_gb", "?")} GB, Python {chost.get("python", "?")}, '
+                  f'scikit-learn {chost.get("scikit_learn", "?")}.</div>')
+
+        if detail is not None:
+            with st.expander("Per subtype timings and model sizes"):
+                st.dataframe(detail.round(4), hide_index=True, width="stretch")
 
 
 # =========================================================================== #

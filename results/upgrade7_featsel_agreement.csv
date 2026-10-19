@@ -1,0 +1,5 @@
+Method,Mean shared features (of 5),Mean Jaccard vs base paper
+RF importance (base paper),5.0,1.0
+Mutual information,3.8666666666666667,0.6412698412698412
+ANOVA F test,2.2,0.2936507936507936
+Recursive elimination,3.8666666666666667,0.6476190476190476

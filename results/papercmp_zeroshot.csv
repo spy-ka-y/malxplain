@@ -1,0 +1,6 @@
+Classifier,Mean accuracy (paper's 11 subtypes),Mean unseen recall (paper's 11 subtypes),Published by paper
+Extra Trees,0.9932277758719281,0.9872612080364817,False
+Random Forest,0.9913910802254872,0.9843478264931307,True
+Gradient Boosting,0.9909804166471818,0.9833830142800205,False
+XGBoost,0.9908633742351758,0.9834339354324656,False
+MLP,0.9844627558036728,0.9759694896815826,False

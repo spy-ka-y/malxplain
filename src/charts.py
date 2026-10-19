@@ -196,3 +196,158 @@ def shap_bar(evidence: pd.DataFrame):
     ax.tick_params(labelsize=7.5)
     plt.tight_layout()
     return fig
+
+
+# ===================================================================== new ===
+def paper_deviation_chart(df: pd.DataFrame):
+    """
+    Our Stage 1 accuracy minus the paper's, per classifier.
+
+    Plotting both accuracies as paired bars would be useless: every value sits
+    between 0.991 and 1.000, so the pairs look identical and the reader learns
+    nothing. The quantity that carries the information is the signed deviation,
+    which is a polarity job, so it gets the validated pair either side of a
+    neutral zero line.
+    """
+    d = df.sort_values("Delta")
+    fig, ax = plt.subplots(figsize=(8.6, 3.4))
+    colours = [ORANGE if v < 0 else BLUE for v in d["Delta"]]
+    ax.barh(d["Classifier"], d["Delta"], color=colours, height=0.55)
+    ax.axvline(0, color=MUTED, lw=1.1, zorder=3)
+
+    _frame(ax, xlabel="Our accuracy minus the paper's",
+           title="Stage 1 reproduction: deviation from the published figures")
+    ax.xaxis.grid(True, color=GRID, lw=0.8)
+    ax.set_axisbelow(True)
+    span = max(abs(d["Delta"])) * 1.45
+    ax.set_xlim(-span, span)
+    for i, v in enumerate(d["Delta"]):
+        ax.text(v + (span * 0.04 if v >= 0 else -span * 0.04), i, f"{v:+.4f}",
+                va="center", ha="left" if v >= 0 else "right",
+                fontsize=8, color=MUTED)
+    ax.text(0.99, 0.04, "right of the line, we scored higher", transform=ax.transAxes,
+            ha="right", fontsize=7.6, color=MUTED, style="italic")
+    plt.tight_layout()
+    return fig
+
+
+def featsel_chart(df: pd.DataFrame):
+    """Mean unseen recall by feature selection method, the paper's method marked."""
+    d = df.sort_values("Mean unseen recall")
+    fig, ax = plt.subplots(figsize=(8.6, 3.2))
+    bars = ax.barh(d["Method"], d["Mean unseen recall"] * 100, color=BLUE, height=0.55)
+    for bar, name in zip(bars, d["Method"]):
+        if "base paper" in name:
+            bar.set_color(ORANGE)
+
+    lo = d["Mean unseen recall"].min() * 100
+    ax.set_xlim(max(96, lo - 0.6), 99.3)
+    _frame(ax, xlabel="Mean recall on unseen subtypes (%)",
+           title="Feature selection methods under the zero shot protocol")
+    ax.xaxis.grid(True, color=GRID, lw=0.8)
+    ax.set_axisbelow(True)
+    for i, v in enumerate(d["Mean unseen recall"] * 100):
+        ax.text(v + 0.04, i, f"{v:.2f}", va="center", fontsize=8, color=MUTED)
+    plt.tight_layout()
+    return fig
+
+
+def operating_point_chart(df: pd.DataFrame):
+    """
+    Mean precision at each malware prevalence, base paper configuration against ours.
+
+    Two series, so a legend is present. Recall is deliberately not plotted beside
+    precision on a second axis: different measures on one frame is the mistake this
+    chart exists to avoid.
+    """
+    order = sorted(df["Prevalence"].unique(), reverse=True)
+    configs = ["Base paper (defaults)", "MalXplain (tuned)"]
+    fig, ax = plt.subplots(figsize=(8.0, 3.4))
+
+    width = 0.34
+    x = np.arange(len(order))
+    for k, (cfg, colour) in enumerate(zip(configs, (ORANGE, BLUE))):
+        vals = [df[(df["Configuration"] == cfg) & (df["Prevalence"] == p)]
+                ["Mean precision"].iloc[0] * 100 for p in order]
+        pos = x + (k - 0.5) * (width + 0.02)
+        ax.bar(pos, vals, width=width, color=colour, label=cfg)
+        for xi, v in zip(pos, vals):
+            ax.text(xi, v + 0.04, f"{v:.2f}", ha="center", fontsize=8, color=MUTED)
+
+    ax.set_xticks(x)
+    ax.set_xticklabels([f"{p:.0%} malware" for p in order])
+    ax.set_ylim(97.5, 100.3)
+    _frame(ax, ylabel="Mean precision (%)",
+           title="Precision falls as malware becomes rarer")
+    ax.yaxis.grid(True, color=GRID, lw=0.8)
+    ax.set_axisbelow(True)
+    # Above the axes, not inside: at this scale a seated legend lands on a bar.
+    # Top right, clear of the left aligned title.
+    leg = ax.legend(frameon=False, fontsize=8.4, ncol=2,
+                    loc="lower right", bbox_to_anchor=(1, 1.01))
+    for t in leg.get_texts():
+        t.set_color(MUTED)
+    plt.tight_layout()
+    return fig
+
+
+def cost_accuracy_chart(df: pd.DataFrame):
+    """
+    Inference cost against unseen recall, one point per classifier family.
+
+    Latency spans 101 to 4540 microseconds, so the x axis is logarithmic; on a
+    linear axis the four fast families collapse onto the origin. Identity is carried
+    by the label beside each point rather than by colour, so no legend is needed.
+    """
+    fig, ax = plt.subplots(figsize=(8.4, 4.0))
+    x = df["Single us/sample"]
+    y = df["Mean_unseen_recall"] * 100
+    ax.scatter(x, y, s=70, color=BLUE, zorder=4,
+               edgecolor=SURFACE, linewidth=2)
+
+    # Families close together on the log axis would overlap with one fixed offset,
+    # so labels alternate above and below as x increases.
+    order = x.rank(method="first").astype(int)
+    for xi, yi, name, rank in zip(x, y, df["Classifier"], order):
+        dy = 7 if rank % 2 else -13
+        ax.annotate(name, (xi, yi), textcoords="offset points",
+                    xytext=(10, dy), fontsize=8.4, color=INK)
+
+    ax.set_xscale("log")
+    _frame(ax, xlabel="Single sample latency, microseconds (log scale)",
+           ylabel="Mean unseen recall (%)",
+           title="What the extra accuracy costs at inference time")
+    ax.grid(True, color=GRID, lw=0.8)
+    ax.set_axisbelow(True)
+    ax.set_xlim(x.min() * 0.5, x.max() * 3.2)
+    pad = (y.max() - y.min()) * 0.42
+    ax.set_ylim(y.min() - pad, y.max() + pad)
+    plt.tight_layout()
+    return fig
+
+
+def significance_chart(df: pd.DataFrame):
+    """
+    Mean unseen recall per arm with its 95 percent interval.
+
+    A point with a whisker, not a bar: the interval is the whole point of the
+    chart, and bars would imply the zero baseline matters here when it does not.
+    """
+    d = df.sort_values("Mean unseen recall")
+    fig, ax = plt.subplots(figsize=(8.4, 2.9))
+    y = np.arange(len(d))
+    centre = d["Mean unseen recall"] * 100
+    lo = (d["Mean unseen recall"] - d["95% CI low"]) * 100
+    hi = (d["95% CI high"] - d["Mean unseen recall"]) * 100
+
+    ax.errorbar(centre, y, xerr=[lo, hi], fmt="o", color=BLUE,
+                ecolor=MUTED, elinewidth=1.4, capsize=4, markersize=8,
+                markeredgecolor=SURFACE, markeredgewidth=1.6, zorder=4)
+    ax.set_yticks(y)
+    ax.set_yticklabels(d["Arm"])
+    _frame(ax, xlabel="Mean recall on unseen subtypes (%), 95 percent interval",
+           title="Ten seeds: which differences survive the noise")
+    ax.xaxis.grid(True, color=GRID, lw=0.8)
+    ax.set_axisbelow(True)
+    plt.tight_layout()
+    return fig

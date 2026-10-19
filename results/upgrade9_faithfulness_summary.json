@@ -1,0 +1,32 @@
+{
+  "reporting_path": "local language model",
+  "ablation_samples": 450,
+  "mean_delta_top_feature": 0.1902222222222222,
+  "mean_delta_random_feature": 0.04282222222222223,
+  "faithfulness_margin": 0.14739999999999998,
+  "top_moved_more_rate": 0.5488888888888889,
+  "tie_rate": 0.2777777777777778,
+  "top_moved_more_rate_excluding_ties": 0.76,
+  "direction_as_shap_predicted_rate": 0.9977777777777778,
+  "grounding_samples": 60,
+  "mean_features_named_per_finding": 3.783333333333333,
+  "findings_naming_no_feature": 0,
+  "feature_grounded_rate": 1.0,
+  "confidence_grounded_rate": 1.0,
+  "fully_grounded_rate": 1.0,
+  "ungrounded_mentions_total": 0,
+  "value_claim_check_withdrawn": "Computed but excluded from the grounding rate. Attributing a phrase such as 'the lower values of' to the right feature needs real parsing; successive versions either counted claims about SHAP magnitude and rank as claims about the measurement, or once tightened fired only once in 60 findings. One genuine error was found by reading, recorded under known_limitations.",
+  "value_claims_tested_not_reported": 1,
+  "known_limitations": [
+    "CWS sample 30841: the model wrote 'the lower values of average OS handles held per process (scaled value 0.0041) and average DLLs loaded per process (scaled value 0.6983)', grouping 0.6983 under 'lower' while quoting the number correctly in the same sentence. One such case observed in 60.",
+    "Ako sample 44242 (earlier run): described three features as having 'collectively contributed 0.9801', where 0.9801 is a scaled feature value and not a contribution.",
+    "60 findings, 3 detectors, one model (llama3.2:3b) under one strict prompt. Not a general claim about language models."
+  ],
+  "control_samples": 36,
+  "control_mean_features_named": 2.0,
+  "control_false_positives": 0,
+  "injected_feature_fault_caught": true,
+  "injected_confidence_fault_caught": true,
+  "injected_direction_fault_caught": true,
+  "matcher_trustworthy": true
+}
